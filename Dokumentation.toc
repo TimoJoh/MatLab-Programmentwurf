@@ -1,3 +1,0 @@
-\babel@toc {ngerman}{}\relax 
-\contentsline {section}{\numberline {1}Phasenportraits für verschiedene K-Werte}{3}{}%
-\providecommand \tocbasic@end@toc@file {}\tocbasic@end@toc@file 
