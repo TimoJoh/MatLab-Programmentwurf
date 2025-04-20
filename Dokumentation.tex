@@ -7,14 +7,43 @@
 \usepackage{amsmath}
 \usepackage{amsfonts}
 \usepackage{float}
+\usepackage{scrlayer-scrpage}
 
-\title{MatLab Programmentwurf}
-\author{Timo Johannsen, Benjamin Peiter, Omer Butt}
-\date{27. April 2025}
+\newcommand{\thesisauthor}{Timo Johannsen \\ Benjamin Peiter \\ Omer Butt}
+\newcommand{\thesiscourse}{Einführung in MATLAB und Simulink}
+\newcommand{\thesisstudy}{Informatik - Künstliche Intelligenz - TIK24}
+
+\newcommand{\thesistype}{Programmentwurf}
+\newcommand{\thesistitle}{Programmentwurf zur Vorlesung „Einführung in MATLAB und Simulink“}
+\newcommand{\thesisdate}{27.04.2025}
 
 \begin{document}
 
-\maketitle
+\begingroup
+    \begin{flushright} % Aligns content to the right
+        \includegraphics[height=1.5cm]{figures/dhbw.png}
+    \end{flushright} 
+    \centering
+    \vspace*{0.5cm}
+    \Large
+    \textbf{\thesistitle} \\
+    \vspace*{3cm}
+    \normalsize
+    \thesistype \\
+    \vspace*{2.5cm}
+    des Studienganges \thesisstudy \\
+    an der Dualen Hochschule Baden-Württemberg Ravensburg Standort Friedrichshafen\\
+    \vspace*{2.5cm}
+    von \\
+    \thesisauthor \\
+    \vfill
+    \thesisdate\\
+    \vspace*{1cm}
+    \textbf{Kurs:} \thesiscourse\\
+    \normalsize
+
+\endgroup
+
 \newpage
 \tableofcontents
 \newpage
