@@ -19,7 +19,22 @@
 \newpage
 
 \section{Visualisierung der Systemdynamik durch Phasenportraits}
-Zuerst werden 3 verschiedene K-Werte mit $K_{1} = ]0,0.6]$, $K_{2} = [0.9,1.1]$ und \hbox{$K_{3} = [1.4,2.0]$} gewählt und die Länge und Anzahl der Trajektorien definiert. 
+Zu der \textit{Tschirikow Standardabbildung}, welche definiert ist durch:
+\begin{gather*}
+    F: [0,2\pi] \times [0,2\pi] \to [0,2\pi] \times [0,2\pi] \\
+    F(I, \theta) = 
+    \begin{pmatrix}
+        I + K \cdot \sin(\theta) \bmod 2\pi \\
+        I + \theta + K \cdot \sin(\theta) \bmod 2\pi
+    \end{pmatrix}
+\end{gather*}
+gehört ein dynamisches System, welche gegeben ist durch die Rekursionsgleichungen
+\begin{gather*}
+    I_{n+1} = (I_n + K \cdot \sin(\theta_n)) \bmod 2\pi \\
+    \theta_{n+1} = (\theta_n + I_n) \bmod 2\pi
+\end{gather*}
+
+\noindent Zuerst werden 3 verschiedene K-Werte mit $K_{1} = ]0,0.6]$, $K_{2} = [0.9,1.1]$ und \hbox{$K_{3} = [1.4,2.0]$} gewählt und die Länge und Anzahl der Trajektorien definiert. 
 \begin{lstlisting}[frame=single, style=Matlab-editor]
 K_values = [rand()*0.6, 0.9 + rand()*0.2, 1.4 + rand()*0.6];
     % Parameter fuer die drei K-Werte
@@ -49,6 +64,7 @@ Die Trajektorie wird dann rekursiv berechnet. Dabei werden die Formeln:
     \theta_{n+1} = (\theta_n + I_n) \bmod 2\pi
 \end{gather*}
 verwendet, wobei $I$ und $\theta$ in jedem Schritt aktualisiert werden. Die Trajektorie wird dann in den Vektoren gespeichert und zum Schluss wird jeder Punkt gezeichnet.
+\newpage
 \begin{lstlisting}[frame=single, style=Matlab-editor]
         for n = 1:N
             I = mod(I + K*sin(theta), 2*pi);
@@ -60,58 +76,106 @@ verwendet, wobei $I$ und $\theta$ in jedem Schritt aktualisiert werden. Die Traj
     end
 \end{lstlisting}
 Diese Werte werden dann in einem Diagramm gezeichnet. Dabei wird die x-Achse mit $\theta$ und die y-Achse mit $I$ beschriftet.
-\newpage
 \noindent Dabei charakterisieren die Phasenportraits die Dynamik des Systems, dass für ein wachsendes K das chaotische Verhalten zunimmt. \\
 \begin{figure}[H]
     \centering
     \begin{minipage}[t]{0.48\textwidth}
         \centering
-        \includegraphics[height=0.33\textheight]{phasenportrait_k1.pdf}
+        \includegraphics[height=0.28\textheight]{figures/phasenportrait_k1.pdf}
         \caption{Phasenportrait für $K_1$}
     \end{minipage}
     \hfill
     \begin{minipage}[t]{0.48\textwidth}
         \centering
-        \includegraphics[height=0.33\textheight]{phasenportrait_k2.pdf}
+        \includegraphics[height=0.28\textheight]{figures/phasenportrait_k2.pdf}
         \caption{Phasenportrait für $K_2$}
     \end{minipage}
-    \par\vspace{1.3cm}
+    \par\vspace{1cm}
     \begin{minipage}[t]{0.48\textwidth}
         \centering
-        \includegraphics[height=0.33\textheight]{phasenportrait_k3.pdf}
+        \includegraphics[height=0.28\textheight]{figures/phasenportrait_k3.pdf}
         \caption{Phasenportrait für $K_3$}
     \end{minipage}
 \end{figure}
 
 \newpage
 \section{Quantifizierung des Chaos durch Ljapunov-Exponenten}
-
+Es werden im gleichmäßigen Abstand 200 K-Werte zwischen 0 und 4 gewählt. 
 \begin{lstlisting}[frame=single, style=Matlab-editor]
 K_vals = linspace(0, 4, 200);
 N = 1000;
 lambda1 = zeros(size(K_vals));
 lambda2 = zeros(size(K_vals));
-
+\end{lstlisting}
+Für jeden K-Wert wird eine Trajektorie mit einer zufälligen Startposition $(I_0, \theta_0)$ aus dem Bereich \hbox{$[0,2\pi]$ x $[0,2\pi]$} erstellt.
+$Q$ ist anfangs eine Einheitsmatrix, die später in der QR-Zerlegung aktualisiert wird. $sumLogR11$ und $sumLogR22$ sind die Summen der Logarithmen der ersten beiden Diagonalelemente der Matrix $R$, die aus der QR-Zerlegung resultiert.
+\begin{lstlisting}[frame=single, style=Matlab-editor]
 for idx = 1:length(K_vals)
     K = K_vals(idx);
     I = rand()*2*pi;
     theta = rand()*2*pi;
     Q = eye(2);
-    sum_log_diag = zeros(1,2);
-
+    
+    sumLogR11 = 0;
+    sumLogR22 = 0;
+\end{lstlisting}
+Die Ljapunov-Exponenten werden dann mit der berechneten Trajektorie berechnet. 
+Dabei wird die \textit{Systemmatrix} $DF$ erstellt, welche die Ableitung der \textit{Standardabbildung} $F$ ist.
+\begin{gather*}
+    DF = \begin{pmatrix}
+        1 & K \cdot \cos(\theta) \\
+        1 & 1 + K \cdot \cos(\theta)
+    \end{pmatrix}
+\end{gather*}
+\begin{lstlisting}[frame=single, style=Matlab-editor]
     for n = 1:N
-        I = mod(I + K*sin(theta), 2*pi);
-        theta = mod(theta + I, 2*pi);
         % Ableitungsmatrix DF
         DF = [1, K*cos(theta); 1, 1 + K*cos(theta)];
+\end{lstlisting}
+Um die Ljapunov-Exponenten zu berechnen, wird die QR-Zerlegung der Matrix $A$ durchgeführt, die aus der Ableitungsmatrix $DF$ und der Matrix $Q$  rekursiv resultiert.
+Dafür werden diese Rekursionsgleichungen aufgestellt:
+\begin{gather*}
+    Q_0 =
+    \begin{pmatrix}
+        1 & 0 \\
+        0 & 1
+    \end{pmatrix} \\
+    A_{n+1} = DF(I_n, \theta_n) \cdot Q_n = 
+    \begin{pmatrix}
+        1 & K \cdot \cos(\theta) \\
+        1 & 1 + K \cdot \cos(\theta)
+    \end{pmatrix} \cdot Q_n \\
+    A_{n+1} = Q_{n+1} \cdot R_{n+1}
+\end{gather*}
+Dabei ist $Q_{n+1} \cdot R_{n+1}$ die QR-Zerlegung der Matrix $A_{n+1}$.
+\begin{lstlisting}[frame=single, style=Matlab-editor]
         A = DF * Q;
         [Q, R] = qr(A);
-        sum_log_diag = sum_log_diag + log(abs(diag(R))');
-    end
+\end{lstlisting}
+\newpage
+Die Ljapunov-Exponenten $\lambda_i, i = 1,2$ sind dann gegeben durch:
+\begin{gather*}
+    \lambda_i = \lim_{N\to\infty}\frac{1}{N}\sum_{n=0}^{N-1}ln((R_n)_{ii})
+\end{gather*}
+Dann werden die $I_n$ und $\theta_n$ entsprechend einer Trajektorie aktualisiert.
+\begin{lstlisting}[frame=single, style=Matlab-editor]
+        sumLogR11 = sumLogR11 + log(abs(R(1,1)));
+        sumLogR22 = sumLogR22 + log(abs(R(2,2)));
 
-    lambda1(idx) = sum_log_diag(1)/N;
-    lambda2(idx) = sum_log_diag(2)/N;
+        I = mod(I + K*sin(theta), 2*pi);
+        theta = mod(theta + I, 2*pi);
+    end
+\end{lstlisting}
+Um die Ljapunov-Exponenten zu erhalten, wird die Summe der Logarithmen der Diagonalelemente $sumLogR11$ und $sumLogR22$, durch die Länge der Trajektorie $N$ geteilt. 
+\begin{lstlisting}[frame=single, style=Matlab-editor]
+    lambda1(idx) = sumLogR11 / N;
+    lambda2(idx) = sumLogR22 / N;
 end
 \end{lstlisting}
-
+Diese Exponenten werden dann für jeden K-Wer in einem Diaagramm gezeichnet.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/exponenten.pdf}
+    \caption{Ljapunov-Exponenten}
+\end{figure}
 \end{document}
