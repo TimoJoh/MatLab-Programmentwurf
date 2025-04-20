@@ -1,7 +1,7 @@
 %Ljapunov Exponenten
 
 K_vals = linspace(0, 4, 200);
-N = 1000;
+N = 5000;
 lambda1 = zeros(size(K_vals));
 lambda2 = zeros(size(K_vals));
 

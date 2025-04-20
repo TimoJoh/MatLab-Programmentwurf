@@ -5,6 +5,7 @@
 \usepackage{graphicx} % Required for inserting images
 \usepackage{matlab-prettifier}
 \usepackage{amsmath}
+\usepackage{amsfonts}
 \usepackage{float}
 
 \title{MatLab Programmentwurf}
@@ -18,7 +19,7 @@
 \tableofcontents
 \newpage
 
-\section{Visualisierung der Systemdynamik durch Phasenportraits}
+\section{Aufgabe (a): Visualisierung der Systemdynamik durch Phasenportraits}
 Zu der \textit{Tschirikow Standardabbildung}, welche definiert ist durch:
 \begin{gather*}
     F: [0,2\pi] \times [0,2\pi] \to [0,2\pi] \times [0,2\pi] \\
@@ -99,8 +100,9 @@ Diese Werte werden dann in einem Diagramm gezeichnet. Dabei wird die x-Achse mit
 \end{figure}
 
 \newpage
-\section{Quantifizierung des Chaos durch Ljapunov-Exponenten}
-Es werden im gleichmäßigen Abstand 200 K-Werte zwischen 0 und 4 gewählt. 
+\section{Aufgabe (b): Quantifizierung des Chaos durch Ljapunov-Exponenten}
+Die Ljapunov-Exponenten zeigen das Ausmaß an chaotischem Verhalten eines Systems quantifiziert an.
+Dafür werden im gleichmäßigen Abstand 200 K-Werte zwischen 0 und 4 gewählt. 
 \begin{lstlisting}[frame=single, style=Matlab-editor]
 K_vals = linspace(0, 4, 200);
 N = 1000;
@@ -172,10 +174,78 @@ Um die Ljapunov-Exponenten zu erhalten, wird die Summe der Logarithmen der Diago
     lambda2(idx) = sumLogR22 / N;
 end
 \end{lstlisting}
-Diese Exponenten werden dann für jeden K-Wer in einem Diaagramm gezeichnet.
+Diese Exponenten werden dann für jeden K-Werte in einem Diagramm gezeichnet.
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{figures/exponenten.pdf}
+    \caption{Ljapunov-Exponenten}
+\end{figure}
+\newpage
+\section{Aufgabe (c): Plausibilisierung der Ergebnisse aus (b)}
+\textbf{1. Determinante der Systemmatrix $DF(I, \theta)$:} \\
+Die Matrix $DF(I, \theta)$ ist gegeben durch:
+\begin{gather*}
+    DF(I, \theta) = \begin{pmatrix}
+        1 & K \cdot \cos(\theta) \\
+        1 & 1 + K \cdot \cos(\theta)
+    \end{pmatrix}
+\end{gather*}
+Die Determinante dieser Matrix ist dann:
+\begin{eqnarray*}
+    det(DF) &=& (1 \cdot (1 + K \cdot \cos(\theta))) - (K \cdot \cos(\theta) \cdot 1) \\
+    &=& 1 + K \cdot \cos(\theta) - K \cdot \cos(\theta) \\
+    &=& 1
+\end{eqnarray*}
+Die Determinante der Systemmatrix ist unabhängig von $K$ und $\theta$ und beträgt immer 1. \\
+
+\noindent\textbf{2. Determinante von $Q_n$:} \\
+Da die Matrix $Q_n$ für alle $n \in \mathbb{N}$ eine orthogonale Matrix ist, gilt:
+$$ det(Q_n) = \pm 1 $$
+
+\noindent\textbf{3. Folgerung für $det(A_n)$}: \\
+Da $A_n = DF \cdot Q_n$ gilt, ist die Determinante von $A_n$ gegeben durch:
+\begin{eqnarray*}
+    det(A_n) &=& det(DF) \cdot det(Q_n) \\
+    &=& 1 \cdot (\pm 1) \\
+    &=& \pm 1  
+\end{eqnarray*}
+
+\noindent\textbf{4. Folgerung für $det(R_n)$:} \\
+Da $A_n = Q_n \cdot R_n$ gilt, ist die Determinante von $A_n$ gegeben durch:
+\begin{eqnarray*}
+    det(A_n) &=& det(Q_n) \cdot det(R_n) \\
+    \pm 1 &=& \pm 1 \cdot det(R_n) \\
+    det(R_n) &=& \pm 1
+\end{eqnarray*}
+
+\noindent\textbf{5. Diagonalelement von $R_n$}: \\
+Da $R_n$ eine obere Dreiecksmatrix mit positiven Diagonalelement ist gilt:
+$$ det(R_n) = (R_n)_{11} \cdot (R_n)_{22} = 1$$
+
+\noindent\textbf{6. Wert von $ln((R_n)_{11}) + ln((R_n)_{22})$:} \\
+Da $ln(a \cdot b) = ln(a) + ln(b)$ gilt, ist:
+\begin{eqnarray*}
+    ln((R_n)_{11}) + ln((R_n)_{22}) &=& ln((R_n)_{11} \cdot (R_n)_{22}) \\
+    &=& ln(1) \\
+    &=& 0
+\end{eqnarray*}
+
+\newpage
+\noindent\textbf{7. Folgerung für die Ljapunov Exponenten $\lambda_1$ und $\lambda_2$:} \\
+Die Exponenten sind definiert durch: 
+$$ \lambda_i = \lim_{N\to\infty}\frac{1}{N}\sum_{n=0}^{N-1}ln((R_n)_{ii}) $$
+Die Summe von $\lambda_1$ und $\lambda_2$ ist somit gegeben durch:
+\begin{eqnarray*}
+    \lambda_1 + \lambda_2 &=& \lim_{N\to\infty}\frac{1}{N}\sum_{n=0}^{N-1}[ln((R_n)_{11}) + ln((R_n)_{22})] \\
+    &=& \lim_{N\to\infty}\frac{1}{N}\cdot 0 \\
+    &=& 0
+\end{eqnarray*}
+Das heißt, dass die Exponenten symmetrisch sind und heben sich gegenseitig auf:
+$$ \lambda_1 = -\lambda_2 $$
+Dies ist auch in dem Diagramm zu sehen:
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/exponenten_data.pdf}
     \caption{Ljapunov-Exponenten}
 \end{figure}
 \end{document}
