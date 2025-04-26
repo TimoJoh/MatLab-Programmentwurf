@@ -9,7 +9,9 @@
 \usepackage{float}
 \usepackage{scrlayer-scrpage}
 
-\newcommand{\thesisauthor}{Timo Johannsen \\ Benjamin Peiter \\ Omer Butt}
+\renewcommand{\familydefault}{\sfdefault}
+
+\newcommand{\thesisauthor}{Benjamin Peiter \\ Omer Butt \\ Timo Johannsen \\ Julian Greiner}
 \newcommand{\thesiscourse}{Einführung in MATLAB und Simulink}
 \newcommand{\thesisstudy}{Informatik - Künstliche Intelligenz - TIK24}
 
@@ -24,7 +26,7 @@
         \includegraphics[height=1.5cm]{figures/dhbw.png}
     \end{flushright} 
     \centering
-    \vspace*{0.5cm}
+    \vspace*{1cm}
     \Large
     \textbf{\thesistitle} \\
     \vspace*{3cm}
@@ -34,7 +36,7 @@
     des Studienganges \thesisstudy \\
     an der Dualen Hochschule Baden-Württemberg Ravensburg Standort Friedrichshafen\\
     \vspace*{2.5cm}
-    von \\
+    \textbf{von}\\
     \thesisauthor \\
     \vfill
     \thesisdate\\
@@ -184,7 +186,7 @@ Dabei ist $Q_{n+1} \cdot R_{n+1}$ die QR-Zerlegung der Matrix $A_{n+1}$.
         [Q, R] = qr(A);
 \end{lstlisting}
 \newpage
-Die Ljapunov-Exponenten $\lambda_i, i = 1,2$ sind dann gegeben durch:
+\noindent Die Ljapunov-Exponenten $\lambda_i, i = 1,2$ sind dann gegeben durch:
 \begin{gather*}
     \lambda_i = \lim_{N\to\infty}\frac{1}{N}\sum_{n=0}^{N-1}ln((R_n)_{ii})
 \end{gather*}
